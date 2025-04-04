@@ -1,6 +1,7 @@
 package org.example.mongodb.controllers;
 
 
+import org.example.mongodb.dto.CreateMensajeDTO;
 import org.example.mongodb.dto.MensajeDTO;
 import org.example.mongodb.services.MensajeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -29,20 +29,20 @@ public class MensajeController {
     public ResponseEntity<MensajeDTO> getMensajeById(@PathVariable String id) {
         Optional<MensajeDTO> mensajeOpt = mensajeService.findById(id);
 
-        return mensajeOpt.map(ResponseEntity::ok)
+        return mensajeOpt
+                .map(mensaje -> ResponseEntity.ok(mensaje))
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public ResponseEntity<MensajeDTO> createMensaje(@RequestBody Map<String, String> payload) {
-        String contenido = payload.get("contenido");
-        String autorId = payload.get("autorId");
+    public ResponseEntity<MensajeDTO> createMensaje(@RequestBody CreateMensajeDTO createMensaje) {
 
-        if (contenido == null || autorId == null) {
+        //Podríamos sustituir esta validación por validación en la clase CreateMensajeDTO
+        if (createMensaje.getContenido() == null || createMensaje.getAutorId() == null) {
             return ResponseEntity.badRequest().build();
         }
 
-        MensajeDTO savedMensaje = mensajeService.save(contenido, autorId);
+        MensajeDTO savedMensaje = mensajeService.save(createMensaje);
 
         if (savedMensaje == null) {
             return ResponseEntity.notFound().build();

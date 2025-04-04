@@ -10,6 +10,5 @@ import java.util.List;
 
 @Repository
 public interface MensajeRepository extends MongoRepository<Mensaje, String> {
-    List<Mensaje> findByAutor(Usuario autor);
     List<Mensaje> findByAutorOrderByFechaCreacionDesc(Usuario autor);
 }

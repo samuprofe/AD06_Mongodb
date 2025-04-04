@@ -1,18 +1,21 @@
 package org.example.mongodb.dto;
 
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.example.mongodb.model.Telefono;
 
+import java.util.ArrayList;
 import java.util.List;
 
-@Data
+
+@Getter
+@Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class UsuarioDTO {
     private String id;
     private String nombre;
     private String email;
-    private List<String> amigosIds;
+    private List<Telefono> telefonos;
 }

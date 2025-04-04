@@ -2,6 +2,7 @@ package org.example.mongodb.controllers;
 
 
 import org.example.mongodb.dto.UsuarioDTO;
+import org.example.mongodb.model.Telefono;
 import org.example.mongodb.model.Usuario;
 import org.example.mongodb.services.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,9 +10,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
 
 @RestController
 @RequestMapping("/api/usuarios")
@@ -22,9 +25,12 @@ public class UsuarioController {
 
     @GetMapping
     public ResponseEntity<List<UsuarioDTO>> getAllUsuarios() {
-        List<UsuarioDTO> usuarios = usuarioService.findAll().stream()
-                .map(usuarioService::convertToDTO)
-                .collect(Collectors.toList());
+        List<UsuarioDTO> usuarios = new ArrayList<>();
+
+        usuarioService.findAll().forEach(usuario -> {
+            UsuarioDTO dto = usuarioService.convertToDTO(usuario);
+            usuarios.add(dto);
+        });
 
         return ResponseEntity.ok(usuarios);
     }
@@ -53,7 +59,8 @@ public class UsuarioController {
         Optional<Usuario> usuarioOpt = usuarioService.findById(id);
 
         if (usuarioOpt.isPresent()) {
-            Usuario updatedUsuario = usuarioService.save(usuario);
+            usuario.setId(id);  //El usuario que viene del cliente en el body normalmente no traerá el id porque ya está en la URL
+            Usuario updatedUsuario = usuarioService.save(usuario);  //Se actualizan todos los datos, si no incluimos alguno se borraría, incluidos los teléfonos. Faltaría validación...
             UsuarioDTO dto = usuarioService.convertToDTO(updatedUsuario);
             return ResponseEntity.ok(dto);
         }
@@ -73,9 +80,9 @@ public class UsuarioController {
         return ResponseEntity.notFound().build();
     }
 
-    @PostMapping("/{usuarioId}/amigos/{amigoId}")
-    public ResponseEntity<Void> agregarAmigo(@PathVariable String usuarioId, @PathVariable String amigoId) {
-        boolean resultado = usuarioService.agregarAmigo(usuarioId, amigoId);
+    @PostMapping("/{usuarioId}/telefonos")
+    public ResponseEntity<Void> addTelefono(@PathVariable String usuarioId, @RequestBody Telefono numeroTelefono) {
+        boolean resultado = usuarioService.addTelefono(usuarioId, numeroTelefono);
 
         if (resultado) {
             return ResponseEntity.status(HttpStatus.CREATED).build();
@@ -84,20 +91,14 @@ public class UsuarioController {
         return ResponseEntity.notFound().build();
     }
 
-    @DeleteMapping("/{usuarioId}/amigos/{amigoId}")
-    public ResponseEntity<Void> eliminarAmigo(@PathVariable String usuarioId, @PathVariable String amigoId) {
-        boolean resultado = usuarioService.eliminarAmigo(usuarioId, amigoId);
+    @DeleteMapping("/{usuarioId}/telefonos/{numeroTelefono}")
+    public ResponseEntity<Void> removeTelefono(@PathVariable String usuarioId, @PathVariable String numeroTelefono) {
+        boolean resultado = usuarioService.removeTelefono(usuarioId, numeroTelefono);
 
         if (resultado) {
             return ResponseEntity.noContent().build();
         }
 
         return ResponseEntity.notFound().build();
-    }
-
-    @GetMapping("/{usuarioId}/amigos")
-    public ResponseEntity<List<UsuarioDTO>> getAmigos(@PathVariable String usuarioId) {
-        List<UsuarioDTO> amigos = usuarioService.getAmigos(usuarioId);
-        return ResponseEntity.ok(amigos);
     }
 }

@@ -2,6 +2,7 @@ package org.example.mongodb.dto;
 
 import lombok.*;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Getter
@@ -12,7 +13,7 @@ import java.util.Date;
 public class MensajeDTO {
     private String id;
     private String contenido;
-    private Date fechaCreacion;
+    private LocalDate fechaCreacion;
     private String autorId;
     private String autorNombre;
 }
