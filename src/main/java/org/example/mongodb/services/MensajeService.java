@@ -48,11 +48,11 @@ public class MensajeService {
     }
 
     public MensajeDTO save(CreateMensajeDTO createMensaje) {
-        Optional<Usuario> autorOpt = usuarioRepository.findById(createMensaje.getAutorId());
+        Optional<Usuario> autorOpt = usuarioRepository.findByEmail(createMensaje.getEmailAutor());
 
         if (autorOpt.isPresent()) {
             Usuario autor = autorOpt.get();
-            Mensaje mensaje = new Mensaje(createMensaje.getAutorId(), autor);
+            Mensaje mensaje = new Mensaje(createMensaje.getContenido(), autor);
             Mensaje savedMensaje = mensajeRepository.save(mensaje);
             return convertToDTO(savedMensaje);
         }

@@ -37,8 +37,8 @@ public class MensajeController {
     @PostMapping
     public ResponseEntity<MensajeDTO> createMensaje(@RequestBody CreateMensajeDTO createMensaje) {
 
-        //Podríamos sustituir esta validación por validación en la clase CreateMensajeDTO
-        if (createMensaje.getContenido() == null || createMensaje.getAutorId() == null) {
+        //Podríamos sustituir esta validación por validación con etiquetas en la clase CreateMensajeDTO
+        if (createMensaje.getContenido() == null || createMensaje.getEmailAutor() == null) {
             return ResponseEntity.badRequest().build();
         }
 

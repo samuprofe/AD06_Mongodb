@@ -11,5 +11,5 @@ import lombok.Setter;
 @AllArgsConstructor
 public class CreateMensajeDTO {
     private String contenido;
-    private String autorId;  // Solo el ID del autor, no el objeto autor completo
+    private String emailAutor;  // Solo el ID del autor, no el objeto autor completo
 }
